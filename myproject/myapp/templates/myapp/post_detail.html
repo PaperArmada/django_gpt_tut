@@ -1,0 +1,12 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    <p><small>Published on: {{ post.created_at }}</small></p>
+    <a href="{% url 'post_edit' post.id %}">Edit</a>
+    <form method="post" action="{% url 'post_delete' post.id %}">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+    <a href="{% url 'post_list' %}">Back to Posts</a>
+{% endblock %}
