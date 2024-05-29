@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, PostModelForm, UserRegistrationForm
 from .models import Post
@@ -12,7 +12,12 @@ def post_list(request):
     posts = Post.objects.all()
     return render(request, 'myapp/post_list.html', {'posts': posts})
 
-def create_post(request):
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render(request, 'myapp/post_detail.html', {'post': post})
+
+@login_required
+def post_create(request):
     if request.method == 'POST':
         form = PostModelForm(request.POST)
         if form.is_valid():
@@ -21,7 +26,29 @@ def create_post(request):
     else:
         form = PostModelForm()
 
-    return render(request, 'myapp/create_post.html', {'form': form})
+    return render(request, 'myapp/post_form.html', {'form': form})
+
+@login_required
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = PostModelForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostModelForm(instance=post)
+
+    return render(request, 'myapp/post_form.html', {'form': form})
+
+@login_required
+def post_delete(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('post_list')
+    return render(request, 'myapp/confirm_delete.html', {'post': post})
+
 
 def register(request):
     if request.method == 'POST':
