@@ -47,7 +47,7 @@ def post_delete(request, pk):
     if request.method == 'POST':
         post.delete()
         return redirect('post_list')
-    return render(request, 'myapp/confirm_delete.html', {'post': post})
+    return render(request, 'myapp/post_confirm_delete.html', {'post': post})
 
 
 def register(request):
