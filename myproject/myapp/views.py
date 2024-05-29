@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from rest_framework import generics
+
 from .forms import PostForm, PostModelForm, UserRegistrationForm
 from .models import Post
+from .serializers import PostSerializer
 
 # Create your views here.
 def home(request):
@@ -63,3 +66,11 @@ def register(request):
 @login_required
 def profile(request):
     return render(request, 'myapp/profile.html')
+
+class PostListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
